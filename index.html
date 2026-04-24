@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuan AI Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body class="bg-gray-900 text-white p-4">
+
+  <!-- HEADER -->
+  <div class="text-center mb-6">
+    <h1 class="text-2xl font-bold text-yellow-400">🔥 Cuan AI Generator</h1>
+    <p class="text-sm text-gray-400">Bikin konten viral dalam 10 detik</p>
+  </div>
+
+  <!-- SELECT TYPE -->
+  <div class="mb-4">
+    <label class="block mb-2 text-sm">Pilih Jenis Konten</label>
+    <select id="type" class="w-full p-3 rounded bg-gray-800 border border-gray-700">
+      <option value="caption">Caption FB Viral</option>
+      <option value="script">Script Video</option>
+      <option value="hook">Hook Viral</option>
+    </select>
+  </div>
+
+  <!-- INPUT -->
+  <div class="mb-4">
+    <label class="block mb-2 text-sm">Masukkan Topik</label>
+    <textarea id="input" rows="3"
+      class="w-full p-3 rounded bg-gray-800 border border-gray-700"
+      placeholder="Contoh: cara cepat dapat uang dari internet"></textarea>
+  </div>
+
+  <!-- BUTTON -->
+  <button onclick="generateContent()"
+    class="w-full bg-yellow-400 text-black font-bold py-3 rounded-lg">
+    🚀 Generate Sekarang
+  </button>
+
+  <!-- RESULT -->
+  <div id="resultBox" class="mt-6 hidden">
+    <h2 class="text-lg mb-2">Hasil:</h2>
+    <div id="result"
+      class="bg-gray-800 p-4 rounded border border-gray-700 whitespace-pre-line"></div>
+
+    <button onclick="copyText()"
+      class="mt-3 w-full bg-green-500 py-2 rounded">
+      📋 Copy
+    </button>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    async function generateContent() {
+      const type = document.getElementById("type").value;
+      const input = document.getElementById("input").value;
+
+      if (!input) {
+        alert("Isi topik dulu!");
+        return;
+      }
+
+      document.getElementById("resultBox").classList.remove("hidden");
+      document.getElementById("result").innerText = "⏳ Generating...";
+
+      try {
+        const res = await fetch("https://YOUR_BACKEND_URL/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ type, input })
+        });
+
+        const data = await res.json();
+        document.getElementById("result").innerText = data.result;
+
+      } catch (err) {
+        document.getElementById("result").innerText = "❌ Error, coba lagi";
+      }
+    }
+
+    function copyText() {
+      const text = document.getElementById("result").innerText;
+      navigator.clipboard.writeText(text);
+      alert("Teks berhasil dicopy!");
+    }
+  </script>
+
+</body>
+</html>
